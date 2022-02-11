@@ -1,0 +1,4 @@
+name: John Doe
+email: john@example.com
+password: john12345678
+roles: ['user']

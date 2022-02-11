@@ -1,0 +1,67 @@
+{
+  "name": "meeting-room-reservation",
+  "version": "0.0.1",
+  "description": "Workspace",
+  "keywords": [
+    "loopback-application",
+    "loopback"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": "12 || 14 || 16 || 17"
+  },
+  "scripts": {
+    "build": "lb-tsc",
+    "build:watch": "lb-tsc --watch",
+    "pretest": "npm run rebuild",
+    "docker:build": "docker build -t meeting-room-reservation .",
+    "docker:run": "docker run -p 3000:3000 -d meeting-room-reservation",
+    "premigrate": "npm run build",
+    "migrate": "node ./dist/migrate",
+    "preopenapi-spec": "npm run build",
+    "openapi-spec": "node ./dist/openapi-spec",
+    "prestart": "npm run rebuild",
+    "start": "node -r source-map-support/register .",
+    "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Shivam Malhotra <shivammalhotraone@gmail.com>",
+  "license": "",
+  "files": [
+    "README.md",
+    "dist",
+    "src",
+    "!*/__tests__"
+  ],
+  "dependencies": {
+    "@loopback/authentication": "^8.0.1",
+    "@loopback/authentication-jwt": "^0.10.1",
+    "@loopback/authorization": "^0.10.1",
+    "@loopback/boot": "^4.0.1",
+    "@loopback/core": "^3.0.1",
+    "@loopback/repository": "^4.0.1",
+    "@loopback/rest": "^11.0.1",
+    "@loopback/rest-explorer": "^4.0.1",
+    "@loopback/service-proxy": "^4.0.1",
+    "bcryptjs": "^2.4.3",
+    "isemail": "^3.2.0",
+    "lodash": "^4.17.21",
+    "loopback-connector-mongodb": "^6.1.0",
+    "tslib": "^2.0.0",
+    "yaml": "^1.10.2"
+  },
+  "devDependencies": {
+    "@loopback/build": "^8.0.1",
+    "@loopback/testlab": "^4.0.1",
+    "@types/bcryptjs": "^2.4.2",
+    "@types/lodash": "4.14.178",
+    "@types/node": "^10.17.60",
+    "source-map-support": "^0.5.21",
+    "typescript": "~4.5.4"
+  }
+}
