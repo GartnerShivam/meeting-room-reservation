@@ -1,5 +1,6 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {Room} from './';
+import { Reservation } from './reservation.model';
 
 @model()
 export class TimeSlot extends Entity {
@@ -21,6 +22,9 @@ export class TimeSlot extends Entity {
     required: true,
   })
   value: string;
+
+  @belongsTo(() => Reservation)
+  reservationId: string;
 
   @belongsTo(() => Room)
   roomId: string;
