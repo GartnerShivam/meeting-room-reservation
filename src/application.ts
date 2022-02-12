@@ -17,16 +17,18 @@ import {RepositoryMixin, SchemaMigrationOptions} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import {MySequence} from './sequence';
-import {User} from './models';
+import {User, Room, TimeSlot} from './models';
 import {PasswordHasherBindings, UserServiceBindings} from './keys';
 import {
   BcryptHasher, JWTService, SecuritySpecEnhancer, UserManagementService
 } from './services';
 import {ErrorHandlerMiddlewareProvider} from './middlewares';
 import {
-  UserRepository
+  UserRepository, RoomRepository, TimeSlotRepository
 } from './repositories';
 import YAML from 'yaml';
+import rooms from './fixtures/rooms.json';
+import timeSlots from './fixtures/time-slots.json';
 
 export {ApplicationConfig};
 
@@ -43,9 +45,7 @@ export const PackageKey = BindingKey.create<PackageInfo>('application.package');
 
 const pkg: PackageInfo = require('../package.json');
 
-export class MeetingRoomReservationApplication extends BootMixin(
-  ServiceMixin(RepositoryMixin(RestApplication)),
-) {
+export class MeetingRoomReservationApplication extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication))) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
@@ -114,9 +114,7 @@ export class MeetingRoomReservationApplication extends BootMixin(
     const userRepo = await this.getRepository(UserRepository);
     await userRepo.deleteAll();
     const usersDir = path.join(__dirname, '../src/fixtures/users');
-    console.log(usersDir);
     const userFiles = fs.readdirSync(usersDir);
-
     for (const file of userFiles) {
       if (file.endsWith('.yml')) {
         const userFile = path.join(usersDir, file);
@@ -127,6 +125,16 @@ export class MeetingRoomReservationApplication extends BootMixin(
         );
         await userManagementService.createUser(user);
       }
+    }
+
+    // Pre-populate rooms
+    const roomRepo = await this.getRepository(RoomRepository);
+    await roomRepo.deleteAll();
+    for (const room of rooms) {
+        const roomWithId = await roomRepo.create(new Room(room));
+        for (const slot of timeSlots) {
+          roomRepo.timeSlots(roomWithId.id).create(slot);
+        }
     }
   }
 }
