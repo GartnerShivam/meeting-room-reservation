@@ -34,3 +34,17 @@ Services are modular components that can be plugged into a application in variou
 
 ### Fixtures
 Dummy data used for migration when application starts.
+
+### Authentication
+All controller methods with @authenticate decorate will require incoming request to have Bearer Token with or without roles.
+
+### Authorization
+All controller methods without the @authorize decorator will be accessible to everyone.
+
+The authorization implementation is done via voter functions. In this app, there is just a single voter function - 'basicAuthorization'. It implements the following rules:
+- No access if the user was created without a roles property.
+- No access if the user's role in not in the allowedRoles authorization metadata.
+- User can access only model's belonging to themselves.
+
+### JWT
+By default, the JWTs will be signed using HS256 with a 64 character long string of random hex digits as secret.
