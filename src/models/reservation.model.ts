@@ -13,10 +13,14 @@ export class Reservation extends Entity {
   @belongsTo(() => Room)
   roomId: string;
 
-  @hasOne(() => TimeSlot)
-  timeSlot: TimeSlot;
+  @property({
+    type: 'string',
+    required: true,
+    mongodb: {dataType: 'ObjectID'},
+  })
+  timeSlotId: string;
 
-  @hasMany(() => User)
+  @property.array(User)
   users: User[];
 
   constructor(data?: Partial<Reservation>) {

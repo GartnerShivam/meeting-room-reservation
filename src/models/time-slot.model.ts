@@ -23,9 +23,6 @@ export class TimeSlot extends Entity {
   })
   value: string;
 
-  @belongsTo(() => Reservation)
-  reservationId: string;
-
   @belongsTo(() => Room)
   roomId: string;
 

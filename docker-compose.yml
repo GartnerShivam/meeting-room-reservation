@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  node-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    container_name: node-api
+    links:
+      - mongo-db
+  mongo-db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    container_name: mongo-db
+    volumes:
+      - ./db/:/data/db

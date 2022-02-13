@@ -17,13 +17,16 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Reservation} from '../models';
-import {ReservationRepository} from '../repositories';
+import {Reservation, TimeSlot} from '../models';
+import {ReservationRepository, UserRepository} from '../repositories';
+import ts from '../fixtures/time-slots.json';
 
 export class ReservationController {
   constructor(
     @repository(ReservationRepository)
     public reservationRepository : ReservationRepository,
+    @repository(UserRepository)
+    public userRepository : UserRepository,
   ) {}
 
   @post('/reservations')
@@ -32,46 +35,32 @@ export class ReservationController {
     content: {'application/json': {schema: getModelSchemaRef(Reservation)}},
   })
   async create(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Reservation, {
-            title: 'NewReservation',
-            exclude: ['id'],
-          }),
-        },
-      },
-    })
-    reservation: Omit<Reservation, 'id'>,
-  ): Promise<string> {
-    console.log(reservation);
+    @requestBody() reservation: any,
+  ): Promise<Reservation> {
     const reser = await this.reservationRepository.findOne({
       where: {
-        roomId: '123',
+        roomId: reservation.roomId,
+        timeSlotId: reservation.timeSlotId
       },
-      include: [{
-        relation: 'timeSlot',
-        scope: {
-          where: {
-            value: '8-10'
-          }
-        }
-      }]
     });
-    console.log('reser =>', reser);
-    // return this.reservationRepository.create(reservation);
-    return '';
-  }
-
-  @get('/reservations/count')
-  @response(200, {
-    description: 'Reservation model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Reservation) where?: Where<Reservation>,
-  ): Promise<Count> {
-    return this.reservationRepository.count(where);
+    const a = await this.userRepository.findById(reservation.userId);
+    if (!reser) {
+      const createdReservation = await this.reservationRepository.create({
+        roomId: reservation.roomId,
+        timeSlotId: reservation.timeSlotId,
+        users: [a],
+      });
+      return createdReservation;
+    } else {
+      const i = reser.users.findIndex(u => u.id === reservation.userId);
+      if (i > -1) {
+        reser.users.splice(i, 1);
+      } else {
+        reser.users.push(a);
+      }
+      this.reservationRepository.updateById(reser.id, {users: reser.users});
+      return reser;
+    }
   }
 
   @get('/reservations')
@@ -92,25 +81,6 @@ export class ReservationController {
     return this.reservationRepository.find(filter);
   }
 
-  @patch('/reservations')
-  @response(200, {
-    description: 'Reservation PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Reservation, {partial: true}),
-        },
-      },
-    })
-    reservation: Reservation,
-    @param.where(Reservation) where?: Where<Reservation>,
-  ): Promise<Count> {
-    return this.reservationRepository.updateAll(reservation, where);
-  }
-
   @get('/reservations/{id}')
   @response(200, {
     description: 'Reservation model instance',
@@ -125,35 +95,6 @@ export class ReservationController {
     @param.filter(Reservation, {exclude: 'where'}) filter?: FilterExcludingWhere<Reservation>
   ): Promise<Reservation> {
     return this.reservationRepository.findById(id, filter);
-  }
-
-  @patch('/reservations/{id}')
-  @response(204, {
-    description: 'Reservation PATCH success',
-  })
-  async updateById(
-    @param.path.string('id') id: string,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Reservation, {partial: true}),
-        },
-      },
-    })
-    reservation: Reservation,
-  ): Promise<void> {
-    await this.reservationRepository.updateById(id, reservation);
-  }
-
-  @put('/reservations/{id}')
-  @response(204, {
-    description: 'Reservation PUT success',
-  })
-  async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() reservation: Reservation,
-  ): Promise<void> {
-    await this.reservationRepository.replaceById(id, reservation);
   }
 
   @del('/reservations/{id}')
