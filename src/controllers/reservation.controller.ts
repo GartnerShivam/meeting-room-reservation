@@ -17,8 +17,11 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import {authenticate} from '@loopback/authentication';
+import {authorize} from '@loopback/authorization';
 import {Reservation, TimeSlot} from '../models';
 import {ReservationRepository, UserRepository} from '../repositories';
+import {basicAuthorization} from '../services';
 import ts from '../fixtures/time-slots.json';
 
 export class ReservationController {
@@ -33,6 +36,11 @@ export class ReservationController {
   @response(200, {
     description: 'Reservation model instance',
     content: {'application/json': {schema: getModelSchemaRef(Reservation)}},
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['user'],
+    voters: [basicAuthorization],
   })
   async create(
     @requestBody() reservation: any,
@@ -75,6 +83,11 @@ export class ReservationController {
       },
     },
   })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['user'],
+    voters: [basicAuthorization],
+  })
   async find(
     @param.filter(Reservation) filter?: Filter<Reservation>,
   ): Promise<Reservation[]> {
@@ -84,6 +97,11 @@ export class ReservationController {
   @del('/reservations/{id}')
   @response(204, {
     description: 'Reservation DELETE success',
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.reservationRepository.deleteById(id);
