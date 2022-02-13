@@ -1,18 +1,30 @@
-version: '3.7'
+version: "3"
 services:
-  node-api:
+  nodeapp:
+    container_name: nodeapp
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
-    container_name: node-api
+      - "5000:5000"
     links:
-      - mongo-db
-  mongo-db:
+      - mongodb
+    depends_on:
+      - mongodb
+    environment:
+      WAIT_HOSTS: mongodb:27017
+    networks:
+      - node-webapp-network
+  mongodb:
+    container_name: mongodb
     image: mongo
+    volumes:
+      - ~/mongo:/data/db
     ports:
       - "27017:27017"
-    container_name: mongo-db
-    volumes:
-      - ./db/:/data/db
+    networks:
+      - node-webapp-network
+networks:
+  node-webapp-network:
+    driver: bridge
