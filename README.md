@@ -1,64 +1,36 @@
 # meeting-room-reservation
 
-This application is generated using [LoopBack 4 CLI](https://loopback.io/doc/en/lb4/Command-line-interface.html) with the
-[initial project layout](https://loopback.io/doc/en/lb4/Loopback-application-layout.html).
-
 ## Install dependencies
 
-By default, dependencies were installed when this application was generated.
-Whenever dependencies in `package.json` are changed, run the following command:
-
-```sh
-npm install
-```
-
-To only install resolved dependencies in `package-lock.json`:
-
-```sh
-npm ci
-```
+You don't need to install any dependencies manually except Docker. So, please make sure you have docker installed.
 
 ## Run the application
-
 ```sh
-npm start
+docker-compose up
 ```
-
-You can also run `node .` to skip the build step.
-
-Open http://127.0.0.1:3000 in your browser.
+Open http://127.0.0.1:5000/explorer to view API contract.
 
 ## Rebuild the project
 
-To incrementally build the project:
+To incrementally build the project and run it:
 
 ```sh
-npm run build
+docker-compose up --build
 ```
 
-To force a full build by cleaning up cached artifacts:
+## UML
+![Class Diagram](/class_diagram.png "Class Diagram")
 
-```sh
-npm run rebuild
-```
+## Usage
+The app will be pre-populated with users, rooms and time-slots fixtures when it start; and all existing data will be deleted. Application has built-in authentication and authorization module and used within app using typescript decorators.
 
+## Components
 
-## Other useful commands
+### Controller
+Controllers expose API endpoints for interacting with the models and more.
 
-- `npm run migrate`: Migrate database schemas for models
-- `npm run openapi-spec`: Generate OpenAPI spec into a file
-- `npm run docker:build`: Build a Docker image for this application
-- `npm run docker:run`: Run this application inside a Docker container
+### Services
+Services are modular components that can be plugged into a application in various locations to contribute additional capabilities and features to the application.
 
-## Tests
-
-```sh
-npm test
-```
-
-## What's next
-
-Please check out [LoopBack 4 documentation](https://loopback.io/doc/en/lb4/) to
-understand how you can continue to add features to this application.
-
-[![LoopBack](https://github.com/loopbackio/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
+### Fixtures
+Dummy data used for migration when application starts.

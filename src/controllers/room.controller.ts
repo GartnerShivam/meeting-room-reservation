@@ -49,6 +49,6 @@ export class RoomController {
   async find(
     @param.filter(Room) filter?: Filter<Room>,
   ): Promise<Room[]> {
-    return this.roomRepository.find({include: ['timeSlot']});
+    return this.roomRepository.find({include: ['timeSlots']});
   }
 }
