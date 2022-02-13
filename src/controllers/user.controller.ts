@@ -1,4 +1,5 @@
 import {
+  authenticate,
   TokenService,
   UserService
 } from '@loopback/authentication';
@@ -13,6 +14,7 @@ import {
 } from '@loopback/rest';
 import {inject} from '@loopback/core';
 import _ from 'lodash';
+import {authorize} from '@loopback/authorization';
 import {TokenServiceBindings} from '@loopback/authentication-jwt';
 import {PasswordHasherBindings, UserServiceBindings} from '../keys';
 import {User} from '../models';
@@ -37,6 +39,29 @@ export class UserController {
     @inject(UserServiceBindings.USER_SERVICE) public userService: UserService<User, Credentials>,
     @inject(UserServiceBindings.USER_SERVICE) public userManagementService: UserManagementService,
   ) { }
+
+  @get('/users')
+  @response(200, {
+    description: 'Array of User model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(User, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['admin'],
+    voters: [basicAuthorization],
+  })
+  async find(
+    @param.filter(User) filter?: Filter<User>,
+  ): Promise<User[]> {
+    return this.userRepository.find();
+  }
 
   @post('/users')
   @response(200, {

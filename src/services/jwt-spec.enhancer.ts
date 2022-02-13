@@ -1,7 +1,3 @@
-// Copyright IBM Corp. 2020. All Rights Reserved.
-// Node module: loopback4-example-shopping
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
 
 import {bind} from '@loopback/core';
 import {
@@ -28,10 +24,6 @@ export const SECURITY_SCHEME_SPEC: SecuritySchemeObjects = {
   },
 };
 
-/**
- * A spec enhancer to add bearer token OpenAPI security entry to
- * `spec.component.securitySchemes`
- */
 @bind(asSpecEnhancer)
 export class SecuritySpecEnhancer implements OASEnhancer {
   name = 'bearerAuth';

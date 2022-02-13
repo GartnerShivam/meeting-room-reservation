@@ -81,22 +81,6 @@ export class ReservationController {
     return this.reservationRepository.find(filter);
   }
 
-  @get('/reservations/{id}')
-  @response(200, {
-    description: 'Reservation model instance',
-    content: {
-      'application/json': {
-        schema: getModelSchemaRef(Reservation, {includeRelations: true}),
-      },
-    },
-  })
-  async findById(
-    @param.path.string('id') id: string,
-    @param.filter(Reservation, {exclude: 'where'}) filter?: FilterExcludingWhere<Reservation>
-  ): Promise<Reservation> {
-    return this.reservationRepository.findById(id, filter);
-  }
-
   @del('/reservations/{id}')
   @response(204, {
     description: 'Reservation DELETE success',
