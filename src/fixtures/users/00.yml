@@ -1,4 +1,4 @@
 name: Shivam Malhotra
 email: shivam@example.com
 password: shivam12345678
-roles: ['admin']
+roles: ['user', 'admin']
