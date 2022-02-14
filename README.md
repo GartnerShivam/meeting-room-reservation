@@ -1,4 +1,4 @@
-# meeting-room-reservation
+# meeting-room-reservation (Node.js + MongoDB)
 
 ## Install dependencies
 
